@@ -1,0 +1,44 @@
+part1:
+sqlite3 reuters.db "select count(*) from frequency where docid = '10398_txt_earn'"
+
+part2:
+SELECT count(term) 
+   FROM frequency 
+   WHERE docid = '10398_txt_earn' and count = 1 
+
+part3:
+SELECT count(term) 
+   FROM (SELECT term FROM frequency WHERE docid = '10398_txt_earn' AND count = 
+     1 UNION SELECT term From frequency WHERE docid = '925_txt_trade' AND count 
+     = 1)
+
+equivalent:
+SELECT  count(DISTINCT term)  
+  FROM frequency WHERE (docid = '10398_txt_earn' OR  docid = '925_txt_trade') 
+       AND count = 1
+
+part4:
+SELECT  count(DISTINCT docid)  
+   FROM frequency WHERE term = 'parliament'"
+
+part5:
+SELECT  count(x)  
+  FROM (SELECT docid x, sum(count) y FROM frequency GROUP BY docid) 
+  WHERE y > 300
+
+equivalent:
+SELECT  count(docid) 
+  FROM (SELECT docid FROM frequency GROUP BY docid HAVING sum(count) > 300)
+
+part6:
+SELECT  count(DISTINCT x.docid)  
+  FROM frequency x, frequency y 
+  WHERE x.term = 'transactions' AND y.term = 'world' AND x.docid = y.docid"
+
+equivalent:
+SELECT  count(DISTINCT x.docid)  FROM frequency x JOIN frequency y ON x.term = 'transactions' AND y.term = 'world' AND x.docid = y.docid
+
+
+
+
+

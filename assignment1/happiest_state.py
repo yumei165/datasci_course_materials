@@ -4,7 +4,7 @@ import json
 import string,re
 
 def clean(tweet):
-        tweet = tweet.lower()
+       # tweet = tweet.lower()
         tweet = re.sub('[%s]'%(re.escape(string.punctuation)),'',tweet)
         words = tweet.split()
         return words
@@ -46,6 +46,6 @@ def main():
                 
    print max(result, key = result.get)
    
-    
+#    
 if __name__ == '__main__':
     main() 

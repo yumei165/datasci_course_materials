@@ -1,3 +1,4 @@
+this is a test
 PROBLEM1:
 part1:
 sqlite3 reuters.db "select count(*) from frequency where docid = '10398_txt_earn'"

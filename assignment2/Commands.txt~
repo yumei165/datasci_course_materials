@@ -1,3 +1,5 @@
+
+PROBLEM1:
 part1:
 sqlite3 reuters.db "select count(*) from frequency where docid = '10398_txt_earn'"
 
@@ -38,24 +40,42 @@ SELECT  count(DISTINCT x.docid)
 equivalent:
 SELECT  count(DISTINCT x.docid)  FROM frequency x JOIN frequency y ON x.term = 'transactions' AND y.term = 'world' AND x.docid = y.docid
 
-prob2: matrix multiplication
+PROBLEM2: matrix multiplication
 
 SELECT A.row_num, B.col_num, sum(A.value * B.value)
   FROM A,B
   WHERE A.col_num = B.row_num
   GROUP BY A.row_num, B.col_num
 
-prob3:
+PROBLEM3:
+
 get DDt:
 sqlite3 reuters.db "SELECT D.docid, Dt.docid, sum(D.v * Dt.v) FROM ((SELECT docid, term, sum(count) v FROM frequency GROUP BY docid,term) D, (SELECT docid, term, sum(count) v FROM frequency GROUP BY docid,term) Dt) WHERE D.term = Dt.term GROUP BY D.dociD, Dt.docid"
 
+get one entry:
 SELECT D.docid, Dt.docid, sum(D.v * Dt.v) 
   FROM ((SELECT docid, term, sum(count) v FROM frequency WHERE docid = '10080_txt_crude' GROUP BY term) D, (SELECT docid, term, sum(count) v FROM frequency WHERE docid = '17035_txt_earn' GROUP BY term) Dt) 
   WHERE D.term = Dt.term 
   GROUP BY D.dociD, Dt.docid
 
-prob4:
-sqlite3 reuters.db "SELECT D.docid, Dt.docid, sum(D.v * Dt.v) FROM ( (SELECT docid, term, sum(count) v FROM frequency GROUP BY docid,term) D, SELECT 'q' as docid, 'washington' as term, 1 as count UNION SELECT 'q' as docid, 'taxes' as term, 1 as count UNION SELECT 'q' as docid, 'treasury' as term, 1 as count Dt) WHERE D.term = Dt.term GROUP BY D.dociD, Dt.docid"
+PROBLEM4:
+
+SELECT D.docid, D2.docid, sum(D.v * D2.count) AS "score" 
+FROM (
+  (SELECT docid, term, sum(count) v FROM frequency GROUP BY docid,term) D,  
+  (SELECT docid, term, count 
+   FROM (
+     (SELECT * FROM frequency UNION SELECT 'q' as docid, 'washington' as term, 
+      1 as count UNION SELECT 'q' as docid, 'taxes' as term, 1 as count UNION 
+      SELECT 'q' as docid, 'treasury' as term, 1 as count) Dt
+   )
+   WHERE Dt.docid = 'q'
+   )  D2
+) 
+WHERE D.term = D2.term 
+GROUP BY D.dociD, D2.docid 
+ORDER BY score DESC
+
 
 
 
